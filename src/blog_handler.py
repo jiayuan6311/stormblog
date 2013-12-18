@@ -58,7 +58,6 @@ class BlogGallery(webapp2.RedirectHandler):
              
         template_values={
             'upload_url': upload_url,
-#             'pics': pics,
             'pic_urls': pic_urls,
             'blog_name': blog_name
         }
@@ -73,7 +72,7 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
         blog_name = self.request.get('blog_name')
         upload_files = self.get_uploads('file')  # 'file' is file upload field in the form
         blob_info = upload_files[0]
-        logging.warning(upload_files)
+
         pic = Picture(parent=main.blog_key(blog_name))
         pic.data = blob_info.key()
         pic.put()

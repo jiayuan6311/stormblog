@@ -16,7 +16,7 @@ max-height:300px;
 	<p>Gallery have {{pic_urls | count}} images.</p>
 	
 	{% for pic_url in pic_urls%}
-	 <img src={{pic_url}}></img>
+	 <img src={{ pic_url }}></img>
 	{% endfor %}
 	<form action="{{ upload_url }}" enctype="multipart/form-data" method="post">
 	 	<div><label>Upload Image:</label></div>
