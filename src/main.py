@@ -15,7 +15,7 @@ from blog_handler import SwitchBlog
 from blog_handler import BlogGallery
 from blog_handler import LoadPicture
 from blog_handler import UploadHandler
-from blog_handler import ServeHandler
+from blog_handler import RSSHandler
 from post_handler import PostEditPage
 from post_handler import AddPost
 from post_handler import ReadPost  
@@ -115,5 +115,5 @@ application = webapp2.WSGIApplication([
     ('/blog_gallery', BlogGallery),
     ('/pic', LoadPicture),
     ('/upload', UploadHandler),
-    ('/serve', ServeHandler)
+    ('/RSS', RSSHandler)
 ], debug=True)

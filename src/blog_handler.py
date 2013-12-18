@@ -10,6 +10,7 @@ from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 
 from blog_model import Blog
+from blog_model import BlogPost
 from blog_model import Picture
 import main
 
@@ -23,8 +24,8 @@ class RegisterBlog(webapp2.RequestHandler):
         
         blogs_query = Blog.query().order(-Blog.create_time)
         blogs_query = blogs_query.filter(Blog.blog_name == blog_name)
-     
-        blogs = blogs_query.fetch()      
+        blogs = blogs_query.fetch()
+              
         if blogs: 
             query_params = {'msg': EXISTING_BLOG_MSG}
             self.redirect('/?'+ urllib.urlencode(query_params))
@@ -79,13 +80,6 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
         pic.put()
         self.redirect('/blog_gallery?blog_name='+blog_name)
 
-class ServeHandler(blobstore_handlers.BlobstoreDownloadHandler):
-  
-    def get(self, resource):
-        resource = str(urllib.unquote(resource))
-        blob_info = blobstore.BlobInfo.get(resource)
-        self.send_blob(blob_info)
-    
 class LoadPicture(webapp2.RedirectHandler):
         
         def get(self):
@@ -98,4 +92,27 @@ class LoadPicture(webapp2.RedirectHandler):
                 self.response.out.write(pic.data)
             else:
                 self.response.out.write('No image')
+
+class RSSHandler(webapp2.RedirectHandler):
+    
+    def get(self):
+    
+        blog_name = self.request.get('blog_name')
+        blogs_query = Blog.query().order(-Blog.create_time)
+        blogs_query = blogs_query.filter(Blog.blog_name == blog_name)
+        blogs = blogs_query.fetch()
+        blog = blogs[0]
+        
+        posts_query = BlogPost.query(ancestor=main.blog_key(blog_name)).order(-BlogPost.create_time)
+        posts = posts_query.fetch()
+        
+        template_values = {
+            'blog': blog,
+            'posts': posts,
+            'back_url': self.request.uri
+        }
+        
+        template = main.JINJA_ENVIRONMENT.get_template('rss.html')
+        self.response.headers['Content-Type'] = 'text/plain'
+        self.response.write(template.render(template_values))
         
