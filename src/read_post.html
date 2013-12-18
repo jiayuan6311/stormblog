@@ -9,6 +9,7 @@ max-height:300px;
 </style> 
 <body>
 	<a href="/">Home Page</a>
+	<a href="/?blog_name={{ post.blog_name }}">To Blog</a>
 	<hr>
 	<h1>Blog: {{ post.blog_name }}</h1>
 	<h2>Title: {{ post.title }}</h2>
@@ -20,16 +21,15 @@ max-height:300px;
 			{{tag}}
 		{% endfor %}
 	</p>
+	{% if currentuser == post.author %}
 	<form action="/add_tag?keyurl={{post.key.urlsafe()}}" method="post">
 		New Tag: <input name="tag"></input>
 		<input type="submit" value="Add">
 	</form>
-	{% if currentuser == post.author %}
-		<form action="/edit_post?blog_name={{post.blog_name}}&keyurl={{post.key.urlsafe()}}" method="post">
-			<input type="submit" value="Edit Post">
-		</form>
+	<form action="/edit_post?blog_name={{post.blog_name}}&keyurl={{post.key.urlsafe()}}" method="post">
+		<input type="submit" value="Edit Post">
+	</form>
 	{% endif %}
-	<a href="/?blog_name={{ post.blog_name }}">To Blog</a>
 </body>
 </html>
 {% endautoescape %}

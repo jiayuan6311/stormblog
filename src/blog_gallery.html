@@ -13,7 +13,7 @@ max-height:300px;
 	<hr>
 	<h1>{{blog_name}}'s Gallery</h1>
 	
-	<p>Gallery have {{pics | count}} images.</p>
+	<p>Gallery have {{pic_urls | count}} images.</p>
 	
 	{% for pic_url in pic_urls%}
 	 <img src={{pic_url}}></img>

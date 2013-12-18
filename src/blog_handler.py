@@ -4,7 +4,6 @@ import logging
 
 from datetime import datetime
 from google.appengine.api import users
-from google.appengine.ext import ndb
 from google.appengine.api import images
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
@@ -59,7 +58,7 @@ class BlogGallery(webapp2.RedirectHandler):
              
         template_values={
             'upload_url': upload_url,
-            'pics': pics,
+#             'pics': pics,
             'pic_urls': pic_urls,
             'blog_name': blog_name
         }
@@ -79,19 +78,6 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
         pic.data = blob_info.key()
         pic.put()
         self.redirect('/blog_gallery?blog_name='+blog_name)
-
-class LoadPicture(webapp2.RedirectHandler):
-        
-        def get(self):
-            key_url = self.request.get('key_url')
-            pic_key = ndb.Key(urlsafe=key_url)
-            pic = pic_key.get()
-            
-            if pic:
-                self.response.headers['Content-Type'] = 'image/png'
-                self.response.out.write(pic.data)
-            else:
-                self.response.out.write('No image')
 
 class RSSHandler(webapp2.RedirectHandler):
     

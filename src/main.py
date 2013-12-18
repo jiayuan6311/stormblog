@@ -13,7 +13,6 @@ from blog_model import BlogPost
 from blog_handler import RegisterBlog
 from blog_handler import SwitchBlog
 from blog_handler import BlogGallery
-from blog_handler import LoadPicture
 from blog_handler import UploadHandler
 from blog_handler import RSSHandler
 from post_handler import PostEditPage
@@ -23,12 +22,17 @@ from tag_handler import AddTag
 from tag_handler import SearchTag
 
 def autolink(string):
-     
-    r = re.compile(r"(http[s]?://[^ ]+(jpg|png|gif))")
+    r = re.compile(r'(http[s]?://[^ ]+(jpg|png|gif))')
     temp = r.sub(r'<img src="\1">',string)
-     
-    r1 = re.compile(r'[^"](http[s]?://[^ ]+)')
-    result = r1.sub(r'<a href="\1"> \1</a>', temp)
+    
+    r1 = re.compile(r'(http[s]?://[^ ]+\.ggpht.com[^ ]+)')
+    temp = r1.sub(r'<img src="\1">',temp)
+    
+    r2 = re.compile(r'(http[s]?://[^ ]+/img/[^ ]+)')
+    temp = r2.sub(r'<img src="\1">',temp)
+    
+    r3 = re.compile(r'[^"](http[s]?://[^ ]+)')
+    result = r3.sub(r'<a href="\1"> \1</a>', temp)
     return result
 
 def user_key(username):
@@ -67,9 +71,12 @@ class MainPage(webapp2.RequestHandler):
                 for post in blogposts_query.fetch():
                     templist = templist + post.taglist
                 tags = list(set(templist))
+                selectedblog=''
             else:
                 blogposts_query = BlogPost.query(ancestor=blog_key(blog_name)).order(-BlogPost.create_time) 
-             
+                blog_query = Blog.query().filter(Blog.blog_name == blog_name)
+                selectedblog = blog_query.fetch()[0]
+                
             blogposts, next_curs, more = blogposts_query.fetch_page(MAX_POST_PER_PAGE, start_cursor=curs)
             cur_url = ''
             if more and next_curs:
@@ -81,22 +88,19 @@ class MainPage(webapp2.RequestHandler):
                 blogs = blogs_query.fetch()
                 url = users.create_logout_url(self.request.uri)
                 url_linktext = 'Logout'   
-                username = user.email()
             else:
                 blogs = ''
                 url = users.create_login_url(self.request.uri)
                 url_linktext = 'Login'
-                username = ''
     
             template_values = {
-                'currentuser': user,
+                'user': user,
                 'blogs': blogs,
-                'selectedblog': blog_name,
-                'username' : username,
+                'selectedblog': selectedblog,
                 'blogposts':  blogposts,
                 'url': url,
                 'url_linktext': url_linktext,
-                'moreHTML': cur_url,
+                'cur_url': cur_url,
                 'tags': tags,
             }    
              
@@ -113,7 +117,6 @@ application = webapp2.WSGIApplication([
     ('/add_tag', AddTag),
     ('/search_tag',SearchTag),
     ('/blog_gallery', BlogGallery),
-    ('/pic', LoadPicture),
     ('/upload', UploadHandler),
     ('/RSS', RSSHandler)
 ], debug=True)

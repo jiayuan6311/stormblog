@@ -12,13 +12,13 @@
 			<h3>{{ post.title }}</h3>
 			<blockquote>
 				<h4>Author: <b>{{ post.author.nickname() }}</b> | Blog: <b>{{ post.blog_name }}</b></h4>
-				<cite>{{ post.brief }}</cite>
+				<cite>{{ post.content | truncate(500)| autolink }}</cite>
 				<p>Create Time: {{ post.create_time.ctime() }} | <a href="/read_post?keyurl={{post.key.urlsafe()}}">permalink</a></p>
 			</blockquote>
 		{% endfor %} 
 	{% endif %}
-	{% if moreHTML %}
-		<a href="/search_tag?cursor={{ moreHTML }}">Older Post...</a>
+	{% if cur_url %}
+		<a href="/search_tag?tag={{tag}}&cursor={{ cur_url }}">Older Post...</a>
 	{% endif %}
 </body>
 </html>

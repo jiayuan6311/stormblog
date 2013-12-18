@@ -7,9 +7,6 @@ from google.appengine.api import users
 from blog_model import BlogPost
 import main
 
-def cap(string, maxlength):
-        return string if len(string)<=maxlength else string[0:maxlength-3]+'...'
-
 class PostEditPage(webapp2.RedirectHandler):
     
     def get(self):
@@ -55,11 +52,10 @@ class AddPost(webapp2.RedirectHandler):
         post.blog_name = blog_name
         post.title = title
         post.content = self.request.get('content')
-        post.brief = cap(post.content,500)
         post.modify_time = datetime.now()
              
         post.put()
-        self.redirect('/?blog_name='+blog_name)
+        self.redirect('/read_post?keyurl='+post.key.urlsafe())
 
 class ReadPost(webapp2.RedirectHandler):
     

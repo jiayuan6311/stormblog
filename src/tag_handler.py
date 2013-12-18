@@ -4,6 +4,7 @@ import os
 import logging
 
 from google.appengine.ext import ndb
+from google.appengine.api import users
 from google.appengine.datastore.datastore_query import Cursor
 
 from blog_model import BlogPost
@@ -12,6 +13,7 @@ import main
 class AddTag(webapp2.RedirectHandler):
     
     def post(self):
+        user = users.get_current_user()
         key = ndb.Key(urlsafe=self.request.get('keyurl'))
         post = key.get()
         tag = self.request.get('tag')
@@ -21,7 +23,10 @@ class AddTag(webapp2.RedirectHandler):
             
         post.put()
         
-        template_values = { 'post': post }
+        template_values = { 
+            'currentuser': user,
+            'post': post 
+        }
         template = main.JINJA_ENVIRONMENT.get_template('read_post.html')
         self.response.write(template.render(template_values))
         
@@ -42,7 +47,7 @@ class SearchTag(webapp2.RedirectHandler):
         
         template_values = {
                 'posts':  posts,
-                'moreHTML': cur_url,
+                'cur_url': cur_url,
                 'tag': tag,
             }    
         

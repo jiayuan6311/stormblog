@@ -2,18 +2,19 @@
 {% autoescape true %}
 <html>
 <body>
-	<a href="/">Home Page</a>
-	<hr>
 	{% if selectedblog %}
-		<h1>{{selectedblog}}</h1>
+		<h1>{{selectedblog.blog_name}}</h1>
+		<a href="/">Home Page</a>
 	{% else %}
 		<h1>Home Page</h1>
 	{% endif %}
-	
+	  
 	{% if selectedblog %}
-		<a href="/edit_post?blog_name={{ selectedblog }}">New Post</a>
-		<a href="/blog_gallery?blog_name={{ selectedblog }}">Blog Gallery</a>
-		<a href="/RSS?blog_name={{selectedblog}}">RSS</a>
+	{% if user==selectedblog.author %}
+		<a href="/edit_post?blog_name={{ selectedblog.blog_name }}">New Post</a>
+	{% endif %}
+		<a href="/blog_gallery?blog_name={{ selectedblog.blog_name }}">Blog Gallery</a>
+		<a href="/RSS?blog_name={{selectedblog.blog_name}}">RSS</a>
   {% endif %}
 
 	{% if tags %}
@@ -31,18 +32,18 @@
 			<h3>{{ blogpost.title }}</h3>
 			<blockquote>
 				<h4>Author: <b>{{ blogpost.author.nickname() }}</b> | Blog: <b>{{ blogpost.blog_name }}</b></h4>
-				<cite>{{ blogpost.brief }}</cite>
+				<cite>{{ blogpost.content | truncate(500)| autolink }}</cite>
 				<p>Create Time: {{ blogpost.create_time.ctime() }} | <a href="/read_post?keyurl={{blogpost.key.urlsafe()}}">permalink</a></p>
 			</blockquote>
 		{% endfor %} 
 	{% endif %}
 	
-	{% if moreHTML %}
-		<a href="/?cursor={{ moreHTML }}&blog_name={{ selectedblog }}">Older Post...</a>
+	{% if cur_url %}
+		<a href="/?cursor={{ cur_url  }}&blog_name={{ selectedblog.blog_name }}">Older Post...</a>
 	{% endif %}
 	<hr>
 	
-	{% if username %}
+	{% if user %}
 	<form action="/switch" method="post">
 	<select name="blogoptions">
 		<option value="" disabled="disabled" selected="selected">Please	select a blog</option>
@@ -59,6 +60,11 @@
   </form>
 	{% endif %}
 	
+	{% if user %}
+	Hi! {{user.nickname()}}
+	{% else %}
+	 Anonymous
+	{% endif %}
 	<a href="{{ url|safe }}">{{ url_linktext }}</a>
 </body>
 </html>

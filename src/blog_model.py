@@ -4,7 +4,6 @@ class BlogPost(ndb.Model):
 	author = ndb.UserProperty()
 	blog_name = ndb.StringProperty()
 	title = ndb.StringProperty()
-	brief = ndb.StringProperty(indexed=False)
 	content = ndb.StringProperty(indexed=False)
 	create_time = ndb.DateTimeProperty(auto_now_add=True)
 	modify_time = ndb.DateTimeProperty(auto_now_add=True)
