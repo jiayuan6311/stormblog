@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+<body>
+	<a href="/">Home Page</a>
+	<hr>
+	<form action="/add_post?blog_name={{ blog_name }}&keyurl={{keyurl}}" method="post">
+ 		Title: 
+ 		<p><input name="title" value={{post_title}}></intput></p>
+ 		Content: 
+ 		<p><textarea name="content" rows="30" cols="60">{{post_content}}</textarea></p>
+    <input type="submit" value="Submit"> 
+  </form>
+</body>
+</html>
+{% endautoescape %}

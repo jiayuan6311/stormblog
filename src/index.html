@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+<body>
+	<a href="/">Home Page</a>
+	<hr>
+	{% if selectedblog %}
+		<h1>{{selectedblog}}</h1>
+	{% else %}
+		<h1>Home Page</h1>
+	{% endif %}
+	
+	{% if selectedblog %}
+		<a href="/edit_post?blog_name={{ selectedblog }}">New Post</a>
+		<a href="/blog_gallery?blog_name={{ selectedblog }}">Blog Gallery</a>
+  {% endif %}
+
+	{% if tags %}
+	<p>Tags:
+		{% for tag in tags %}
+			<a href="/search_tag?tag={{tag}}">{{tag}}</a>
+		{% endfor %}
+	</p>
+	{% endif %}
+	<hr>
+	
+	<h2>Recent Post</h2>
+	{% if blogposts %} 
+		{% for blogpost in blogposts %}
+			<h3>{{ blogpost.title }}</h3>
+			<blockquote>
+				<h4>Author: <b>{{ blogpost.author.nickname() }}</b> | Blog: <b>{{ blogpost.blog_name }}</b></h4>
+				<cite>{{ blogpost.brief }}</cite>
+				<p>Create Time: {{ blogpost.create_time.ctime() }} | <a href="/read_post?keyurl={{blogpost.key.urlsafe()}}">permalink</a></p>
+			</blockquote>
+		{% endfor %} 
+	{% endif %}
+	
+	{% if moreHTML %}
+		<a href="/?cursor={{ moreHTML }}&blog_name={{ selectedblog }}">Older Post...</a>
+	{% endif %}
+	<hr>
+	
+	{% if username %}
+	<form action="/switch" method="post">
+	<select name="blogoptions">
+		<option value="" disabled="disabled" selected="selected">Please	select a blog</option>
+		{% for blog in blogs %}
+			<option value="{{ blog.blog_name }}"> {{ blog.blog_name }} </option>
+		{% endfor %}
+	</select>
+	<input type="submit" value="Switch Blog"/>
+	</form>
+	
+	<form name="addform" action="/register" method="post">
+ 		<input name="blog_name">
+    <input type="submit" value="Register Another Blog">
+  </form>
+	{% endif %}
+	
+	<a href="{{ url|safe }}">{{ url_linktext }}</a>
+</body>
+</html>
+{% endautoescape %}

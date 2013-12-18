@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+<style> 
+img { 
+max-width:500px; 
+max-height:300px; 
+}
+</style> 
+<body>
+	<a href="/">Home Page</a>
+	<hr>
+	<h1>Blog: {{ post.blog_name }}</h1>
+	<h2>Title: {{ post.title }}</h2>
+	<p>Content:{% autoescape false%}  {{ post.content | autolink }} {% endautoescape %} </p>
+	<p>Create time: {{ post.create_time.ctime() }} | Last Modify: {{ post.modify_time.ctime() }}</p>
+	<hr>
+	<p>Tag: 
+		{% for tag in post.taglist %}
+			{{tag}}
+		{% endfor %}
+	</p>
+	<form action="/add_tag?keyurl={{post.key.urlsafe()}}" method="post">
+		New Tag: <input name="tag"></input>
+		<input type="submit" value="Add">
+	</form>
+	{% if currentuser == post.author %}
+		<form action="/edit_post?blog_name={{post.blog_name}}&keyurl={{post.key.urlsafe()}}" method="post">
+			<input type="submit" value="Edit Post">
+		</form>
+	{% endif %}
+	<a href="/?blog_name={{ post.blog_name }}">To Blog</a>
+</body>
+</html>
+{% endautoescape %}
