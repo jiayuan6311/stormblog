@@ -6,6 +6,8 @@ from datetime import datetime
 from google.appengine.api import users
 from google.appengine.ext import ndb
 from google.appengine.api import images
+from google.appengine.ext import blobstore
+from google.appengine.ext.webapp import blobstore_handlers
 
 from blog_model import Blog
 from blog_model import Picture
@@ -43,30 +45,47 @@ class SwitchBlog(webapp2.RedirectHandler):
 class BlogGallery(webapp2.RedirectHandler):
     
     def get(self):
-        blog_name = self.request.get('blog_name')
-        image = self.request.get('img')
-        
+        blog_name = self.request.get('blog_name')        
         
         pics_query = Picture.query(ancestor=main.blog_key(blog_name))
         pics = pics_query.fetch() 
+        upload_url = blobstore.create_upload_url('/upload')
         
-        if image:
-            image = images.resize(image, 32, 32)
-            pic = Picture(parent=main.blog_key(blog_name))
-            pic.data = ndb.blobstore.BlobInfo(image)
-            pic.put()
+        pic_urls = []
+        
+        for pic in pics:
+            pic_urls.append(images.get_serving_url(pic.data))
              
         template_values={
+            'upload_url': upload_url,
             'pics': pics,
+            'pic_urls': pic_urls,
             'blog_name': blog_name
         }
         
         template = main.JINJA_ENVIRONMENT.get_template('blog_gallery.html')
         self.response.write(template.render(template_values))
        
+ 
+class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
+    
     def post(self):
-        self.get() 
+        blog_name = self.request.get('blog_name')
+        upload_files = self.get_uploads('file')  # 'file' is file upload field in the form
+        blob_info = upload_files[0]
+        logging.warning(upload_files)
+        pic = Picture(parent=main.blog_key(blog_name))
+        pic.data = blob_info.key()
+        pic.put()
+        self.redirect('/blog_gallery?blog_name='+blog_name)
 
+class ServeHandler(blobstore_handlers.BlobstoreDownloadHandler):
+  
+    def get(self, resource):
+        resource = str(urllib.unquote(resource))
+        blob_info = blobstore.BlobInfo.get(resource)
+        self.send_blob(blob_info)
+    
 class LoadPicture(webapp2.RedirectHandler):
         
         def get(self):

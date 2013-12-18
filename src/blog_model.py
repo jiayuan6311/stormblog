@@ -18,4 +18,4 @@ class Blog(ndb.Model):
 	
 
 class Picture(ndb.Model):
-	data = ndb.BlobProperty()
+	data = ndb.BlobKeyProperty()

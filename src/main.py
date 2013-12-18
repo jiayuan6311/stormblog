@@ -14,6 +14,8 @@ from blog_handler import RegisterBlog
 from blog_handler import SwitchBlog
 from blog_handler import BlogGallery
 from blog_handler import LoadPicture
+from blog_handler import UploadHandler
+from blog_handler import ServeHandler
 from post_handler import PostEditPage
 from post_handler import AddPost
 from post_handler import ReadPost  
@@ -21,10 +23,10 @@ from tag_handler import AddTag
 from tag_handler import SearchTag
 
 def autolink(string):
-    
+     
     r = re.compile(r"(http[s]?://[^ ]+(jpg|png|gif))")
     temp = r.sub(r'<img src="\1">',string)
-    
+     
     r1 = re.compile(r'[^"](http[s]?://[^ ]+)')
     result = r1.sub(r'<a href="\1"> \1</a>', temp)
     return result
@@ -87,6 +89,7 @@ class MainPage(webapp2.RequestHandler):
                 username = ''
     
             template_values = {
+                'currentuser': user,
                 'blogs': blogs,
                 'selectedblog': blog_name,
                 'username' : username,
@@ -110,5 +113,7 @@ application = webapp2.WSGIApplication([
     ('/add_tag', AddTag),
     ('/search_tag',SearchTag),
     ('/blog_gallery', BlogGallery),
-    ('/pic', LoadPicture)
+    ('/pic', LoadPicture),
+    ('/upload', UploadHandler),
+    ('/serve', ServeHandler)
 ], debug=True)

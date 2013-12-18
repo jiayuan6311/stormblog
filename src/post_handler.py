@@ -1,8 +1,4 @@
 import webapp2
-import jinja2
-import os
-import re
-import logging
 
 from datetime import datetime
 from google.appengine.ext import ndb
@@ -11,26 +7,8 @@ from google.appengine.api import users
 from blog_model import BlogPost
 import main
 
-
-# def autolink(string):
-#     
-#     r = re.compile(r"(http[s]?://[^ ]+(jpg|png|gif))")
-#     temp = r.sub(r'<img src="\1">',string)
-#     
-#     r1 = re.compile(r'[^"](http[s]?://[^ ]+)')
-#     result = r1.sub(r'<a href="\1"> \1</a>', temp)
-#     return result
-
-
 def cap(string, maxlength):
         return string if len(string)<=maxlength else string[0:maxlength-3]+'...'
-    
-
-# JINJA_ENVIRONMENT = jinja2.Environment(
-#     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
-#     extensions=['jinja2.ext.autoescape'],
-#     autoescape=True)
-# JINJA_ENVIRONMENT.filters['autolink'] = autolink
 
 class PostEditPage(webapp2.RedirectHandler):
     

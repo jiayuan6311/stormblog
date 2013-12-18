@@ -9,11 +9,6 @@ from google.appengine.datastore.datastore_query import Cursor
 from blog_model import BlogPost
 import main
 
-# JINJA_ENVIRONMENT = jinja2.Environment(
-#     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
-#     extensions=['jinja2.ext.autoescape'],
-#     autoescape=True)
-
 class AddTag(webapp2.RedirectHandler):
     
     def post(self):

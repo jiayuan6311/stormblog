@@ -14,12 +14,14 @@ max-height:300px;
 	<h1>{{blog_name}}'s Gallery</h1>
 	
 	<p>Gallery have {{pics | count}} images.</p>
-	{% for pic in pics %}
-		<img src="pic?key_url={{pic.key.urlsafe()}}"></img>
+	
+	{% for pic_url in pic_urls%}
+	 <img src={{pic_url}}></img>
 	{% endfor %}
-	<form action="/blog_gallery?blog_name={{ blog_name }}" enctype="multipart/form-data" method="post">
+	<form action="{{ upload_url }}" enctype="multipart/form-data" method="post">
 	 	<div><label>Upload Image:</label></div>
- 		<div><input type="file" name="img"/></div>
+	 	<input type="hidden" name="blog_name" value={{blog_name}}></input>
+ 		<div><input type="file" name="file"/></div>
  		<input type="submit" name="Upload"></input>
 	</form>
 		
